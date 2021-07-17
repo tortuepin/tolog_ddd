@@ -18,12 +18,12 @@ type File struct {
 	format Formatter
 }
 
-func NewFile(dir string, parse Parser, format Formatter) (File, error) {
+func NewFile(dir string, parse Parser, format Formatter) (*File, error) {
 	_, err := os.Stat(dir)
 	if err != nil {
-		return File{}, fmt.Errorf("dir is not exist: %s", dir)
+		return nil, fmt.Errorf("dir is not exist: %s", dir)
 	}
-	return File{dir: dir, parse: parse, format: format}, nil
+	return &File{dir: dir, parse: parse, format: format}, nil
 }
 
 func (f *File) Read() ([]model.Log, error) {

@@ -19,8 +19,8 @@ type LogService struct {
 	updater repository.Updater
 }
 
-func NewLogService(reader repository.Reader, creater repository.Creater, updater repository.Updater) (LogService, error) {
-	return LogService{reader, creater, updater}, nil
+func NewLogService(reader repository.Reader, creater repository.Creater, updater repository.Updater) (*LogService, error) {
+	return &LogService{reader, creater, updater}, nil
 }
 
 func (s *LogService) NewLog(tags []model.Tag, content model.LogContent) error {
