@@ -37,3 +37,7 @@ func (m *MarkdownParser) ParseLogForTest(lines []string) (ParseReturn, error) {
 func NewParseReturnForTest(time time.Time, tags []model.Tag, content model.LogContent) ParseReturn {
 	return ParseReturn{logTimePart{time}, tags, content}
 }
+
+func NewFilenameForTest(date string, ext string) Filename {
+	return Filename{date: date, ext: ext}
+}

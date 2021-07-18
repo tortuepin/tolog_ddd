@@ -10,8 +10,6 @@ import (
 	"github.com/tortuepin/tolog_ddd/pkg/domain/model"
 )
 
-const EXT = ".md"
-
 type File struct {
 	dir    string
 	parse  Parser
