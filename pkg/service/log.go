@@ -8,7 +8,7 @@ import (
 )
 
 type LogServiceInterface interface {
-	NewLog([]model.Tag, model.LogContent) error
+	NewLog([]model.Tag, model.LogContent) (model.Log, error)
 	EditLog(model.Log, model.Log) error
 	ReadLogs() ([]model.Log, error)
 }
@@ -23,22 +23,22 @@ func NewLogService(reader repository.Reader, creater repository.Creater, updater
 	return &LogService{reader, creater, updater}, nil
 }
 
-func (s *LogService) NewLog(tags []model.Tag, content model.LogContent) error {
+func (s *LogService) NewLog(tags []model.Tag, content model.LogContent) (model.Log, error) {
 	t, err := model.NewLogTimeNow()
 	if err != nil {
-		return fmt.Errorf("failed in NewLogTimeNow(): %w", err)
+		return model.Log{}, fmt.Errorf("failed in NewLogTimeNow(): %w", err)
 	}
 
 	log, err := model.NewLog(t, tags, content)
 	if err != nil {
-		return fmt.Errorf("failed in NewLog(): %w", err)
+		return model.Log{}, fmt.Errorf("failed in NewLog(): %w", err)
 	}
 
 	if err := s.creater.Create(log); err != nil {
-		return fmt.Errorf("failed in Write(): %w", err)
+		return model.Log{}, fmt.Errorf("failed in Write(): %w", err)
 	}
 
-	return nil
+	return log, nil
 }
 
 func (s *LogService) EditLog(from model.Log, to model.Log) error {

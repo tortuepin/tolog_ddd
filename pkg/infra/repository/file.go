@@ -23,6 +23,10 @@ func NewFile(dir string, parse Parser, format Formatter) (*File, error) {
 	return &File{dir: dir, parse: parse, format: format}, nil
 }
 
+func (f *File) Dir() string {
+	return f.dir
+}
+
 func (f *File) Read() ([]model.Log, error) {
 	pattern := filepath.Join(f.dir, "/*"+EXT)
 	files, err := filepath.Glob(pattern)

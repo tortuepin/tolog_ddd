@@ -45,16 +45,17 @@ func Test_NewLog(t *testing.T) {
 		creater repository.Creater
 	}
 	tests := []struct {
-		name   string
-		args   args
-		fields fields
-		want   error
+		name    string
+		args    args
+		fields  fields
+		want    model.Log
+		wantErr bool
 	}{
 		{
 			name: "",
 			args: args{
-				tags:    []model.Tag{},
-				content: model.LogContent{},
+				tags:    []model.Tag{service.NewTagForTest("@tag1")},
+				content: service.NewLogContentForTest([]string{"content"}),
 			},
 			fields: fields{
 				creater: &fakeCreater{
@@ -63,20 +64,29 @@ func Test_NewLog(t *testing.T) {
 					},
 				},
 			},
-			want: nil,
+			want: service.NewLogForTest(
+				model.LogTime{},
+				[]model.Tag{
+					service.NewTagForTest("@tag1"),
+				},
+				service.NewLogContentForTest([]string{"content"}),
+			),
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			s, _ := service.NewLogService(nil, tt.fields.creater, nil)
-			got := s.NewLog(tt.args.tags, tt.args.content)
-			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("service.NewLog() got = %v, want %v", got, tt.want)
+			got, err := s.NewLog(tt.args.tags, tt.args.content)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("service.NewLog() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if err := service.EqualWithoutTime(got, tt.want); err != nil {
+				t.Errorf("service.NewLog(): %v", err)
 			}
 		})
 	}
-
 }
 
 func Test_EditLog(t *testing.T) {

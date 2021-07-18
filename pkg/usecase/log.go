@@ -4,16 +4,17 @@ import "fmt"
 import "github.com/tortuepin/tolog_ddd/pkg/service"
 import "github.com/tortuepin/tolog_ddd/pkg/domain/model"
 
-func LogNew(service service.LogServiceInterface, tagstrings []string) error {
+func LogNew(s service.LogServiceInterface, tagstrings []string) (model.Log, error) {
 	tags, err := model.NewTags(tagstrings)
 	if err != nil {
-		return fmt.Errorf("error in usecase.LogNew(): %w", err)
+		return model.Log{}, fmt.Errorf("error in usecase.LogNew(): %w", err)
 	}
 
 	content := model.LogContent{}
 
-	if err := service.NewLog(tags, content); err != nil {
-		return fmt.Errorf("error in usecase.LogNew(): %w", err)
+	log, err := s.NewLog(tags, content)
+	if err != nil {
+		return model.Log{}, fmt.Errorf("error in usecase.LogNew(): %w", err)
 	}
-	return nil
+	return log, nil
 }
