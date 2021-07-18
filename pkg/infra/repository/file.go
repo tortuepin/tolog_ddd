@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
-	"time"
 
 	"github.com/tortuepin/tolog_ddd/pkg/domain/model"
 )
@@ -33,7 +32,11 @@ func (f *File) Read() ([]model.Log, error) {
 
 	logs := []model.Log{}
 	for _, file := range files {
-		date, err := ParseFilename(filepath.Base(file))
+		filename, err := NewFilenameFromString(filepath.Base(file))
+		if err != nil {
+			return []model.Log{}, fmt.Errorf("failed in File.Read(): %w", err)
+		}
+		date, err := filename.Date()
 		if err != nil {
 			return []model.Log{}, fmt.Errorf("failed in File.Read(): %w", err)
 		}
@@ -61,8 +64,9 @@ func (f *File) Create(log model.Log) error {
 	// logをformatする
 	lines := f.format.Format(log)
 	// 追記する
-	filename := filepath.Join(f.dir, FormatFilename(log.Time().Time()))
-	if err := appendLines(filename, lines); err != nil {
+	filename := NewFilenameFromDate(log.Time().Time())
+	path := filepath.Join(f.dir, filename.Filename())
+	if err := appendLines(path, lines); err != nil {
 		return fmt.Errorf("error in Create(): %w", err)
 	}
 	return nil
@@ -96,18 +100,4 @@ func readLines(filename string) ([]string, error) {
 		ret = append(ret, scanner.Text())
 	}
 	return ret, nil
-}
-
-func ParseFilename(filename string) (time.Time, error) {
-	layout := "060102" + EXT
-	t, err := time.Parse(layout, filename)
-	if err != nil {
-		return time.Time{}, fmt.Errorf("error in ParseFilename: %w", err)
-	}
-	return t, nil
-}
-
-func FormatFilename(t time.Time) string {
-	layout := "060102" + EXT
-	return t.Format(layout)
 }

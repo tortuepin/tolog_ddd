@@ -81,38 +81,6 @@ func Test_Read(t *testing.T) {
 
 }
 
-func Test_ParseFilename(t *testing.T) {
-	type args struct {
-		filename string
-	}
-	tests := []struct {
-		name    string
-		args    args
-		want    time.Time
-		wantErr bool
-	}{
-		{
-			name: "",
-			args: args{
-				filename: "210710.md",
-			},
-			want: time.Date(2021, time.July, 10, 0, 0, 0, 0, time.UTC),
-		},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			got, err := repository.ParseFilename(tt.args.filename)
-			if (err != nil) != tt.wantErr {
-				t.Errorf("ParseFilename() error = %v, wantErr %v", err, tt.wantErr)
-				return
-			}
-			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("ParseFilename() got = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
-
 const CreateTestDataDir = "testdata/create"
 
 func Test_Create(t *testing.T) {
@@ -224,34 +192,6 @@ func Test_Create(t *testing.T) {
 			if err := verifyWrittenContents(tt.want.filename, tt.want.contents); err != nil {
 				t.Errorf("File.Create() error = %v", err)
 				return
-			}
-		})
-	}
-}
-
-func Test_FormatFilename(t *testing.T) {
-	type args struct {
-		t time.Time
-	}
-	tests := []struct {
-		name    string
-		args    args
-		want    string
-		wantErr bool
-	}{
-		{
-			name: "",
-			args: args{
-				t: time.Date(2021, time.July, 10, 0, 0, 0, 0, time.UTC),
-			},
-			want: "210710.md",
-		},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			got := repository.FormatFilename(tt.args.t)
-			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("FormatFilename() got = %v, want %v", got, tt.want)
 			}
 		})
 	}
