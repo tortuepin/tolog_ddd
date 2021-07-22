@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/tortuepin/tolog_ddd/pkg/domain/model"
+	"github.com/tortuepin/tolog_ddd/pkg/domain/repository/file"
 	"github.com/tortuepin/tolog_ddd/pkg/infra/repository"
 )
 
@@ -18,7 +19,7 @@ func Test_Parse(t *testing.T) {
 	tests := []struct {
 		name    string
 		args    args
-		want    []repository.ParseReturn
+		want    []file.ParseReturn
 		wantErr bool
 	}{
 		{
@@ -36,8 +37,8 @@ func Test_Parse(t *testing.T) {
 					"content2",
 				},
 			},
-			want: []repository.ParseReturn{
-				repository.NewParseReturnForTest(
+			want: []file.ParseReturn{
+				file.NewParseReturn(
 					time.Date(0, time.January, 1, 12, 34, 0, 0, time.UTC),
 					[]model.Tag{repository.NewTagForTest("@tag")},
 					repository.NewLogContentForTest([]string{
@@ -46,7 +47,7 @@ func Test_Parse(t *testing.T) {
 						"content2",
 						""}),
 				),
-				repository.NewParseReturnForTest(
+				file.NewParseReturn(
 					time.Date(0, time.January, 1, 12, 34, 56, 0, time.UTC),
 					[]model.Tag{},
 					repository.NewLogContentForTest([]string{
@@ -81,7 +82,7 @@ func Test_ParseLog(t *testing.T) {
 	tests := []struct {
 		name    string
 		args    args
-		want    repository.ParseReturn
+		want    file.ParseReturn
 		wantErr bool
 	}{
 		{
@@ -95,7 +96,7 @@ func Test_ParseLog(t *testing.T) {
 					"",
 				},
 			},
-			want: repository.NewParseReturnForTest(
+			want: file.NewParseReturn(
 				time.Date(0, time.January, 1, 12, 34, 0, 0, time.UTC),
 				[]model.Tag{repository.NewTagForTest("@tag")},
 				repository.NewLogContentForTest([]string{
@@ -116,7 +117,7 @@ func Test_ParseLog(t *testing.T) {
 					"",
 				},
 			},
-			want: repository.NewParseReturnForTest(
+			want: file.NewParseReturn(
 				time.Date(0, time.January, 1, 12, 34, 56, 0, time.UTC),
 				[]model.Tag{repository.NewTagForTest("@tag")},
 				repository.NewLogContentForTest([]string{

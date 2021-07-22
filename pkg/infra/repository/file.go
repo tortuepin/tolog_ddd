@@ -7,15 +7,16 @@ import (
 	"path/filepath"
 
 	"github.com/tortuepin/tolog_ddd/pkg/domain/model"
+	"github.com/tortuepin/tolog_ddd/pkg/domain/repository/file"
 )
 
 type File struct {
 	dir    string
-	parse  Parser
-	format Formatter
+	parse  file.Parser
+	format file.Formatter
 }
 
-func NewFile(dir string, parse Parser, format Formatter) (*File, error) {
+func NewFile(dir string, parse file.Parser, format file.Formatter) (*File, error) {
 	_, err := os.Stat(dir)
 	if err != nil {
 		return nil, fmt.Errorf("dir is not exist: %s", dir)
