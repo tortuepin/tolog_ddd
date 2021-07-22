@@ -9,20 +9,21 @@ import (
 	"time"
 
 	"github.com/tortuepin/tolog_ddd/pkg/domain/model"
+	"github.com/tortuepin/tolog_ddd/pkg/domain/repository/file"
 	"github.com/tortuepin/tolog_ddd/pkg/infra/repository"
 )
 
 type fakeParse struct {
-	repository.Parser
-	fakeParse func([]string) ([]repository.ParseReturn, error)
+	file.Parser
+	fakeParse func([]string) ([]file.ParseReturn, error)
 }
 
-func (f *fakeParse) Parse(s []string) ([]repository.ParseReturn, error) {
+func (f *fakeParse) Parse(s []string) ([]file.ParseReturn, error) {
 	return f.fakeParse(s)
 }
 
 type fakeFormat struct {
-	repository.Formatter
+	file.Formatter
 	fakeFormat func(model.Log) []string
 }
 
@@ -33,7 +34,7 @@ func (f *fakeFormat) Format(log model.Log) []string {
 func Test_Read(t *testing.T) {
 	type fields struct {
 		dir   string
-		parse repository.Parser
+		parse file.Parser
 	}
 	tests := []struct {
 		name    string
@@ -46,7 +47,7 @@ func Test_Read(t *testing.T) {
 			fields: fields{
 				dir: "testdata/read",
 				parse: &fakeParse{
-					fakeParse: func(lines []string) ([]repository.ParseReturn, error) {
+					fakeParse: func(lines []string) ([]file.ParseReturn, error) {
 						p := repository.NewMarkdownParser()
 						return p.Parse(lines)
 					},
@@ -86,7 +87,7 @@ const CreateTestDataDir = "testdata/create"
 func Test_Create(t *testing.T) {
 	type fields struct {
 		dir    string
-		format repository.Formatter
+		format file.Formatter
 	}
 	type args struct {
 		log model.Log
