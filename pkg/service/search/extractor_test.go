@@ -1,4 +1,4 @@
-package extractor_test
+package search_test
 
 import (
 	"reflect"
@@ -6,12 +6,12 @@ import (
 	"time"
 
 	"github.com/tortuepin/tolog_ddd/pkg/domain/model"
-	"github.com/tortuepin/tolog_ddd/pkg/service/extractor"
+	"github.com/tortuepin/tolog_ddd/pkg/service/search"
 	"github.com/tortuepin/tolog_ddd/pkg/testhelper"
 )
 
 type fakeQuery struct {
-	extractor.Query
+	search.Query
 	fakeSatisfy func(model.Log) bool
 }
 
@@ -22,7 +22,7 @@ func (f *fakeQuery) Satisfy(log model.Log) bool {
 func TestDefaultExtractor_Extract(t *testing.T) {
 	type arg struct {
 		logs  []model.Log
-		query extractor.Query
+		query search.Query
 	}
 	tests := []struct {
 		name    string
@@ -69,14 +69,14 @@ func TestDefaultExtractor_Extract(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			sut, _ := extractor.NewDefaultExtractor()
+			sut, _ := search.NewDefaultExtractor()
 			got, err := sut.Extract(tt.arg.logs, tt.arg.query)
 			if (err != nil) != tt.wantErr {
-				t.Errorf("extractor.Extract() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("search.Extract() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
 			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("extractor.Extract(): got = %v, want = %v", got, tt.want)
+				t.Errorf("search.Extract(): got = %v, want = %v", got, tt.want)
 			}
 		})
 	}

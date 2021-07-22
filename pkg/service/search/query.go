@@ -1,6 +1,22 @@
-package extractor
+package search
 
 import "github.com/tortuepin/tolog_ddd/pkg/domain/model"
+
+type QueryBuilder interface {
+	Build() (Query, error)
+}
+
+type TagQueryBuider struct {
+}
+
+func NewTagQueryBuilder() *TagQueryBuider {
+	return &TagQueryBuider{}
+}
+
+func (qb *TagQueryBuider) Build(queryString string) (Query, error) {
+	return NewTagQuery([]string{queryString}), nil
+
+}
 
 type Query interface {
 	Satisfy(model.Log) bool

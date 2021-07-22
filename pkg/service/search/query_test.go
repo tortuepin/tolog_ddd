@@ -1,4 +1,4 @@
-package extractor_test
+package search_test
 
 import (
 	"reflect"
@@ -6,9 +6,43 @@ import (
 	"time"
 
 	"github.com/tortuepin/tolog_ddd/pkg/domain/model"
-	"github.com/tortuepin/tolog_ddd/pkg/service/extractor"
+	"github.com/tortuepin/tolog_ddd/pkg/service/search"
 	"github.com/tortuepin/tolog_ddd/pkg/testhelper"
 )
+
+func TestTagQueryBuilder_Build(t *testing.T) {
+	type args struct {
+		queryString string
+	}
+	tests := []struct {
+		name    string
+		args    args
+		want    search.Query
+		wantErr bool
+	}{
+		{
+			name: "",
+			args: args{
+				queryString: "@tag1",
+			},
+			want: search.NewTagQuery([]string{"@tag1"}),
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			sut := search.NewTagQueryBuilder()
+			got, err := sut.Build(tt.args.queryString)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("TagQueryBuilder.Build() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("TagQueryBuilder.Build(): got = %v, want = %v", got, tt.want)
+			}
+		})
+	}
+}
 
 func TestTagQuery_Satisfy(t *testing.T) {
 	type args struct {
@@ -16,13 +50,13 @@ func TestTagQuery_Satisfy(t *testing.T) {
 	}
 	tests := []struct {
 		name string
-		sut  *extractor.TagQuery
+		sut  *search.TagQuery
 		args args
 		want bool
 	}{
 		{
 			name: "1番目のタグにマッチする場合",
-			sut: extractor.NewTagQuery([]string{
+			sut: search.NewTagQuery([]string{
 				"@tag1",
 				"@tag2",
 			}),
@@ -38,7 +72,7 @@ func TestTagQuery_Satisfy(t *testing.T) {
 		},
 		{
 			name: "2番目のタグにマッチする場合",
-			sut: extractor.NewTagQuery([]string{
+			sut: search.NewTagQuery([]string{
 				"@tag1",
 				"@tag2",
 			}),
@@ -54,7 +88,7 @@ func TestTagQuery_Satisfy(t *testing.T) {
 		},
 		{
 			name: "どのタグにもマッチしない場合",
-			sut: extractor.NewTagQuery([]string{
+			sut: search.NewTagQuery([]string{
 				"@tag1",
 				"@tag2",
 			}),

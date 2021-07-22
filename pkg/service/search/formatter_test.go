@@ -1,4 +1,4 @@
-package extractor_test
+package search_test
 
 import (
 	"reflect"
@@ -6,11 +6,11 @@ import (
 	"time"
 
 	"github.com/tortuepin/tolog_ddd/pkg/domain/model"
-	"github.com/tortuepin/tolog_ddd/pkg/service/extractor"
+	"github.com/tortuepin/tolog_ddd/pkg/service/search"
 	"github.com/tortuepin/tolog_ddd/pkg/testhelper"
 )
 
-func TestExtractFormatter_Format(t *testing.T) {
+func TestSearchFormatter_Format(t *testing.T) {
 
 	type args struct {
 		log model.Log
@@ -73,7 +73,7 @@ func TestExtractFormatter_Format(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			sut := extractor.NewExtractFormatter()
+			sut := search.NewSearchFormatter()
 			got := sut.Format(tt.args.log)
 			if !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("ExtractorFormatter.Format(): got = %v, want = %v", got, tt.want)

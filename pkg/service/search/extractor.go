@@ -1,6 +1,8 @@
-package extractor
+package search
 
-import "github.com/tortuepin/tolog_ddd/pkg/domain/model"
+import (
+	"github.com/tortuepin/tolog_ddd/pkg/domain/model"
+)
 
 type Extractor interface {
 	Extract([]model.Log, Query) ([]model.Log, error)
