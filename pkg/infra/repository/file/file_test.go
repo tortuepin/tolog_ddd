@@ -1,4 +1,4 @@
-package repository_test
+package file_test
 
 import (
 	"bufio"
@@ -10,7 +10,8 @@ import (
 
 	"github.com/tortuepin/tolog_ddd/pkg/domain/model"
 	"github.com/tortuepin/tolog_ddd/pkg/domain/repository/file"
-	"github.com/tortuepin/tolog_ddd/pkg/infra/repository"
+	ifile "github.com/tortuepin/tolog_ddd/pkg/infra/repository/file"
+	"github.com/tortuepin/tolog_ddd/pkg/infra/repository/file/format"
 )
 
 type fakeParse struct {
@@ -48,16 +49,16 @@ func Test_Read(t *testing.T) {
 				dir: "testdata/read",
 				parse: &fakeParse{
 					fakeParse: func(lines []string) ([]file.ParseReturn, error) {
-						p := repository.NewMarkdownParser()
+						p := format.NewMarkdownParser()
 						return p.Parse(lines)
 					},
 				},
 			},
 			want: []model.Log{
-				repository.NewLogForTest(
-					repository.NewLogTimeForTest(time.Date(2021, time.July, 10, 12, 34, 0, 0, time.UTC)),
-					[]model.Tag{repository.NewTagForTest("@tag1")},
-					repository.NewLogContentForTest([]string{"", "content1", "content2"}),
+				ifile.NewLogForTest(
+					ifile.NewLogTimeForTest(time.Date(2021, time.July, 10, 12, 34, 0, 0, time.UTC)),
+					[]model.Tag{ifile.NewTagForTest("@tag1")},
+					ifile.NewLogContentForTest([]string{"", "content1", "content2"}),
 				),
 			},
 		},
@@ -65,9 +66,9 @@ func Test_Read(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			f, err := repository.NewFile(tt.fields.dir, tt.fields.parse, nil)
+			f, err := ifile.NewFile(tt.fields.dir, tt.fields.parse, nil)
 			if err != nil {
-				t.Errorf("repository.Newfile() error = %w", err)
+				t.Errorf("file.Newfile() error = %w", err)
 			}
 			got, err := f.Read()
 			if (err != nil) != tt.wantErr {
@@ -106,17 +107,17 @@ func Test_Create(t *testing.T) {
 		{
 			name: "秒まで",
 			args: args{
-				log: repository.NewLogForTest(
-					repository.NewLogTimeForTest(time.Date(2021, time.July, 11, 12, 34, 56, 0, time.UTC)),
-					[]model.Tag{repository.NewTagForTest("@tag1"), repository.NewTagForTest("@tag2")},
-					repository.NewLogContentForTest([]string{"", "content1", "content2"}),
+				log: ifile.NewLogForTest(
+					ifile.NewLogTimeForTest(time.Date(2021, time.July, 11, 12, 34, 56, 0, time.UTC)),
+					[]model.Tag{ifile.NewTagForTest("@tag1"), ifile.NewTagForTest("@tag2")},
+					ifile.NewLogContentForTest([]string{"", "content1", "content2"}),
 				),
 			},
 			fields: fields{
 				dir: CreateTestDataDir,
 				format: &fakeFormat{
 					fakeFormat: func(log model.Log) []string {
-						f := repository.NewMarkdownFormatter()
+						f := format.NewMarkdownFormatter()
 						return f.Format(log)
 					},
 				},
@@ -129,17 +130,17 @@ func Test_Create(t *testing.T) {
 		{
 			name: "秒なし",
 			args: args{
-				log: repository.NewLogForTest(
-					repository.NewLogTimeForTest(time.Date(2021, time.July, 11, 12, 34, 0, 0, time.UTC)),
-					[]model.Tag{repository.NewTagForTest("@tag1"), repository.NewTagForTest("@tag2")},
-					repository.NewLogContentForTest([]string{"", "content1", "content2"}),
+				log: ifile.NewLogForTest(
+					ifile.NewLogTimeForTest(time.Date(2021, time.July, 11, 12, 34, 0, 0, time.UTC)),
+					[]model.Tag{ifile.NewTagForTest("@tag1"), ifile.NewTagForTest("@tag2")},
+					ifile.NewLogContentForTest([]string{"", "content1", "content2"}),
 				),
 			},
 			fields: fields{
 				dir: CreateTestDataDir,
 				format: &fakeFormat{
 					fakeFormat: func(log model.Log) []string {
-						f := repository.NewMarkdownFormatter()
+						f := format.NewMarkdownFormatter()
 						return f.Format(log)
 					},
 				},
@@ -152,17 +153,17 @@ func Test_Create(t *testing.T) {
 		{
 			name: "tagなし",
 			args: args{
-				log: repository.NewLogForTest(
-					repository.NewLogTimeForTest(time.Date(2021, time.July, 11, 12, 34, 56, 0, time.UTC)),
+				log: ifile.NewLogForTest(
+					ifile.NewLogTimeForTest(time.Date(2021, time.July, 11, 12, 34, 56, 0, time.UTC)),
 					[]model.Tag{},
-					repository.NewLogContentForTest([]string{"", "content1", "content2"}),
+					ifile.NewLogContentForTest([]string{"", "content1", "content2"}),
 				),
 			},
 			fields: fields{
 				dir: CreateTestDataDir,
 				format: &fakeFormat{
 					fakeFormat: func(log model.Log) []string {
-						f := repository.NewMarkdownFormatter()
+						f := format.NewMarkdownFormatter()
 						return f.Format(log)
 					},
 				},
@@ -180,9 +181,9 @@ func Test_Create(t *testing.T) {
 				t.Errorf("File.Create() failed to crean up: %v", err)
 				return
 			}
-			f, err := repository.NewFile(tt.fields.dir, nil, tt.fields.format)
+			f, err := ifile.NewFile(tt.fields.dir, nil, tt.fields.format)
 			if err != nil {
-				t.Errorf("repository.Newfile() error = %w", err)
+				t.Errorf("file.Newfile() error = %w", err)
 			}
 			err = f.Create(tt.args.log)
 			if (err != nil) != tt.wantErr {

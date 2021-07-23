@@ -1,13 +1,14 @@
 package registry
 
 import "fmt"
-import "github.com/tortuepin/tolog_ddd/pkg/infra/repository"
+import "github.com/tortuepin/tolog_ddd/pkg/infra/repository/file"
+import "github.com/tortuepin/tolog_ddd/pkg/infra/repository/file/format"
 import "github.com/tortuepin/tolog_ddd/pkg/service"
 
 func RegisterFileLogService(dir string) (service.LogServiceInterface, error) {
-	parser := repository.NewMarkdownParser()
-	formatter := repository.NewMarkdownFormatter()
-	f, err := repository.NewFile(dir, parser, formatter)
+	parser := format.NewMarkdownParser()
+	formatter := format.NewMarkdownFormatter()
+	f, err := file.NewFile(dir, parser, formatter)
 	if err != nil {
 		return nil, fmt.Errorf("error in RegisterFileLogService(): %w", err)
 	}
