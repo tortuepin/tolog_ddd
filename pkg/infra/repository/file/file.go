@@ -39,7 +39,9 @@ func (f *File) Read() ([]model.Log, error) {
 	for _, file := range files {
 		filename, err := NewFilenameFromString(filepath.Base(file))
 		if err != nil {
-			return []model.Log{}, fmt.Errorf("failed in File.Read(): %w", err)
+			//  TODO 適切なlogを吐く
+			//return []model.Log{}, fmt.Errorf("failed in File.Read(): %w", err)
+			continue
 		}
 		date, err := filename.Date()
 		if err != nil {
