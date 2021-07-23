@@ -1,4 +1,4 @@
-package repository
+package format
 
 import (
 	"fmt"

@@ -1,4 +1,4 @@
-package search_test
+package format_test
 
 import (
 	"reflect"
@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"github.com/tortuepin/tolog_ddd/pkg/domain/model"
-	"github.com/tortuepin/tolog_ddd/pkg/service/search"
+	"github.com/tortuepin/tolog_ddd/pkg/infra/repository/file/format"
 	"github.com/tortuepin/tolog_ddd/pkg/testhelper"
 )
 
@@ -73,7 +73,7 @@ func TestSearchFormatter_Format(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			sut := search.NewSearchFormatter()
+			sut := format.NewSearchFormatter()
 			got := sut.Format(tt.args.log)
 			if !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("ExtractorFormatter.Format(): got = %v, want = %v", got, tt.want)

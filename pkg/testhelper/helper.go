@@ -27,3 +27,20 @@ func NewLogForTest(t *testing.T, ti time.Time, tagsstr []string, contentstr []st
 	}
 	return l
 }
+
+func NewLogTimeForTest(t *testing.T, time time.Time) model.LogTime {
+	t.Helper()
+	ret, _ := model.NewLogTime(time)
+	return ret
+}
+func NewTagForTest(t *testing.T, tag string) model.Tag {
+	t.Helper()
+	ret, _ := model.NewTag(tag)
+	return ret
+}
+
+func NewLogContentForTest(t *testing.T, content []string) model.LogContent {
+	t.Helper()
+	ret, _ := model.NewLogContent(content)
+	return ret
+}

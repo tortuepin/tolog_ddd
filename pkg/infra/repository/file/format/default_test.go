@@ -1,4 +1,4 @@
-package repository_test
+package format_test
 
 import (
 	"reflect"
@@ -7,7 +7,8 @@ import (
 
 	"github.com/tortuepin/tolog_ddd/pkg/domain/model"
 	"github.com/tortuepin/tolog_ddd/pkg/domain/repository/file"
-	"github.com/tortuepin/tolog_ddd/pkg/infra/repository"
+	"github.com/tortuepin/tolog_ddd/pkg/infra/repository/file/format"
+	"github.com/tortuepin/tolog_ddd/pkg/testhelper"
 )
 
 func Test_Parse(t *testing.T) {
@@ -40,8 +41,8 @@ func Test_Parse(t *testing.T) {
 			want: []file.ParseReturn{
 				file.NewParseReturn(
 					time.Date(0, time.January, 1, 12, 34, 0, 0, time.UTC),
-					[]model.Tag{repository.NewTagForTest("@tag")},
-					repository.NewLogContentForTest([]string{
+					[]model.Tag{testhelper.NewTagForTest(t, "@tag")},
+					testhelper.NewLogContentForTest(t, []string{
 						"",
 						"content1",
 						"content2",
@@ -50,7 +51,7 @@ func Test_Parse(t *testing.T) {
 				file.NewParseReturn(
 					time.Date(0, time.January, 1, 12, 34, 56, 0, time.UTC),
 					[]model.Tag{},
-					repository.NewLogContentForTest([]string{
+					testhelper.NewLogContentForTest(t, []string{
 						"",
 						"content1",
 						"content2"}),
@@ -60,7 +61,7 @@ func Test_Parse(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			formatter := repository.NewMarkdownParser()
+			formatter := format.NewMarkdownParser()
 			got, err := formatter.Parse(tt.args.lines)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("MarkdownFormatter.Parse() error = %v, wantErr %v", err, tt.wantErr)
@@ -98,8 +99,8 @@ func Test_ParseLog(t *testing.T) {
 			},
 			want: file.NewParseReturn(
 				time.Date(0, time.January, 1, 12, 34, 0, 0, time.UTC),
-				[]model.Tag{repository.NewTagForTest("@tag")},
-				repository.NewLogContentForTest([]string{
+				[]model.Tag{testhelper.NewTagForTest(t, "@tag")},
+				testhelper.NewLogContentForTest(t, []string{
 					"",
 					"content1",
 					"content2",
@@ -119,8 +120,8 @@ func Test_ParseLog(t *testing.T) {
 			},
 			want: file.NewParseReturn(
 				time.Date(0, time.January, 1, 12, 34, 56, 0, time.UTC),
-				[]model.Tag{repository.NewTagForTest("@tag")},
-				repository.NewLogContentForTest([]string{
+				[]model.Tag{testhelper.NewTagForTest(t, "@tag")},
+				testhelper.NewLogContentForTest(t, []string{
 					"",
 					"content1",
 					"content2",
@@ -130,7 +131,7 @@ func Test_ParseLog(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			formatter := repository.NewMarkdownParser()
+			formatter := format.NewMarkdownParser()
 			got, err := formatter.ParseLogForTest(tt.args.lines)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("MarkdownParser.parseLog() error = %v, wantErr %v", err, tt.wantErr)
@@ -191,7 +192,7 @@ func Test_ParseLines(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			formatter := repository.NewMarkdownParser()
+			formatter := format.NewMarkdownParser()
 			got, err := formatter.ParseLinesForTest(tt.args.lines)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("MarkdownParser.parseLines() error = %v, wantErr %v", err, tt.wantErr)
@@ -219,10 +220,10 @@ func Test_Format(t *testing.T) {
 		{
 			name: "",
 			args: args{
-				log: repository.NewLogForTest(
-					repository.NewLogTimeForTest(time.Date(2021, time.July, 10, 12, 34, 0, 0, time.UTC)),
-					[]model.Tag{repository.NewTagForTest("@tag1")},
-					repository.NewLogContentForTest([]string{"", "content1", "content2"}),
+				log: testhelper.NewLogForTest(t,
+					time.Date(2021, time.July, 10, 12, 34, 0, 0, time.UTC),
+					[]string{"@tag1"},
+					[]string{"", "content1", "content2"},
 				),
 			},
 			want: []string{
@@ -235,10 +236,10 @@ func Test_Format(t *testing.T) {
 		{
 			name: "秒まで指定されている場合",
 			args: args{
-				log: repository.NewLogForTest(
-					repository.NewLogTimeForTest(time.Date(2021, time.July, 10, 12, 34, 56, 0, time.UTC)),
-					[]model.Tag{repository.NewTagForTest("@tag1")},
-					repository.NewLogContentForTest([]string{"", "content1", "content2"}),
+				log: testhelper.NewLogForTest(t,
+					time.Date(2021, time.July, 10, 12, 34, 56, 0, time.UTC),
+					[]string{"@tag1"},
+					[]string{"", "content1", "content2"},
 				),
 			},
 			want: []string{
@@ -251,10 +252,10 @@ func Test_Format(t *testing.T) {
 		{
 			name: "タグが複数ある場合",
 			args: args{
-				log: repository.NewLogForTest(
-					repository.NewLogTimeForTest(time.Date(2021, time.July, 10, 12, 34, 56, 0, time.UTC)),
-					[]model.Tag{repository.NewTagForTest("@tag1"), repository.NewTagForTest("@tag2")},
-					repository.NewLogContentForTest([]string{"", "content1", "content2"}),
+				log: testhelper.NewLogForTest(t,
+					time.Date(2021, time.July, 10, 12, 34, 56, 0, time.UTC),
+					[]string{"@tag1", "@tag2"},
+					[]string{"", "content1", "content2"},
 				),
 			},
 			want: []string{
@@ -267,10 +268,10 @@ func Test_Format(t *testing.T) {
 		{
 			name: "タグがない場合",
 			args: args{
-				log: repository.NewLogForTest(
-					repository.NewLogTimeForTest(time.Date(2021, time.July, 10, 12, 34, 56, 0, time.UTC)),
-					[]model.Tag{},
-					repository.NewLogContentForTest([]string{"", "content1", "content2"}),
+				log: testhelper.NewLogForTest(t,
+					time.Date(2021, time.July, 10, 12, 34, 56, 0, time.UTC),
+					[]string{},
+					[]string{"", "content1", "content2"},
 				),
 			},
 			want: []string{
@@ -283,7 +284,7 @@ func Test_Format(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			formatter := repository.NewMarkdownFormatter()
+			formatter := format.NewMarkdownFormatter()
 			got := formatter.Format(tt.args.log)
 			if !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("MarkdownFormatter.Format() got = %v, want %v", got, tt.want)

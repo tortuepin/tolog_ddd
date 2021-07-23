@@ -1,10 +1,9 @@
-package repository
+package file
 
 import (
 	"time"
 
 	"github.com/tortuepin/tolog_ddd/pkg/domain/model"
-	"github.com/tortuepin/tolog_ddd/pkg/domain/repository/file"
 )
 
 func NewLogForTest(time model.LogTime, tags []model.Tag, content model.LogContent) model.Log {
@@ -25,14 +24,6 @@ func NewTagForTest(tag string) model.Tag {
 func NewLogContentForTest(content []string) model.LogContent {
 	ret, _ := model.NewLogContent(content)
 	return ret
-}
-
-func (m *MarkdownParser) ParseLinesForTest(lines []string) ([][]string, error) {
-	return m.parseLines(lines)
-}
-
-func (m *MarkdownParser) ParseLogForTest(lines []string) (file.ParseReturn, error) {
-	return m.parseLog(lines)
 }
 
 func NewFilenameForTest(date string, ext string) Filename {
