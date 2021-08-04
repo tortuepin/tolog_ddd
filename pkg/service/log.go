@@ -5,6 +5,7 @@ import (
 
 	"github.com/tortuepin/tolog_ddd/pkg/domain/model"
 	"github.com/tortuepin/tolog_ddd/pkg/domain/repository"
+	"github.com/tortuepin/tolog_ddd/pkg/service/generator"
 )
 
 type LogServiceInterface interface {
@@ -51,4 +52,44 @@ func (s *LogService) EditLog(from model.Log, to model.Log) error {
 
 func (s *LogService) ReadLogs() ([]model.Log, error) {
 	return s.reader.Read()
+}
+
+type LogServiceWithLogGenerator struct {
+	logservice *LogService
+	generator  generator.LogGenerator
+}
+
+func NewLogServiceWithLogGenerator(reader repository.Reader, creater repository.Creater, updater repository.Updater, generator generator.LogGenerator) (*LogServiceWithLogGenerator, error) {
+	return &LogServiceWithLogGenerator{logservice: &LogService{reader, creater, updater}, generator: generator}, nil
+}
+
+func (s *LogServiceWithLogGenerator) NewLog(tags []model.Tag, content model.LogContent) (model.Log, error) {
+	t, err := model.NewLogTimeNow()
+	if err != nil {
+		return model.Log{}, fmt.Errorf("failed in LogServiceWithLogGenerator.NewLog(): %w", err)
+	}
+
+	log, err := model.NewLog(t, tags, content)
+	if err != nil {
+		return model.Log{}, fmt.Errorf("failed in LogServiceWithLogGenerator.NewLog(): %w", err)
+	}
+
+	generated, err := s.generator.Generate(log)
+	if err != nil {
+		return model.Log{}, fmt.Errorf("failed in LogServiceWithLogGenerator.NewLog(): %w", err)
+	}
+
+	if err := s.logservice.creater.Create(generated); err != nil {
+		return model.Log{}, fmt.Errorf("failed in LogServiceWithLogGenerator.NewLog(): %w", err)
+	}
+
+	return generated, nil
+}
+
+func (s *LogServiceWithLogGenerator) EditLog(from model.Log, to model.Log) error {
+	return s.logservice.EditLog(from, to)
+}
+
+func (s *LogServiceWithLogGenerator) ReadLogs() ([]model.Log, error) {
+	return s.logservice.ReadLogs()
 }
